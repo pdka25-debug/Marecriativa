@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maré Criativa — Criatividade com Profundidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #080808;
+    --dark: #0f0f0f;
+    --card: #141414;
+    --card2: #1a1a1a;
+    --border: rgba(255,255,255,0.07);
+    --border-md: rgba(255,255,255,0.13);
+    --white: #f0ede8;
+    --white2: #b8b4ae;
+    --muted: rgba(240,237,232,0.38);
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; cursor: none; }
+
+  /* CURSOR */
+  .cursor-dot { width: 8px; height: 8px; background: var(--white); border-radius: 50%; position: fixed; top:0; left:0; pointer-events:none; z-index:9999; mix-blend-mode: difference; }
+  .cursor-ring { width: 30px; height: 30px; border: 1px solid rgba(240,237,232,0.3); border-radius: 50%; position: fixed; top:0; left:0; pointer-events:none; z-index:9998; transition: width .2s, height .2s; }
+
+  /* NAV */
+  nav { position: fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1.1rem 2.5rem; background:rgba(8,8,8,0.93); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+  .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .nav-logo-text { font-family:var(--font-display); font-size:1.4rem; letter-spacing:0.06em; color:var(--white); line-height:1; }
+  .nav-links { display:flex; gap:2rem; list-style:none; }
+  .nav-links a { font-size:0.75rem; font-weight:500; color:var(--muted); text-decoration:none; letter-spacing:0.12em; text-transform:uppercase; transition:color .2s; }
+  .nav-links a:hover { color:var(--white); }
+  .nav-cta { font-family:var(--font-mono); font-size:0.75rem; padding:0.5rem 1.2rem; border:1px solid var(--border-md); border-radius:3px; color:var(--white); text-decoration:none; letter-spacing:0.05em; transition:background .2s, color .2s; }
+  .nav-cta:hover { background:var(--white); color:var(--black); }
+
+  /* HERO */
+  .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; align-items:center; padding:8rem 2.5rem 4rem; gap:3rem; position:relative; overflow:hidden; }
+  .scanlines { position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.008) 2px,rgba(255,255,255,0.008) 4px); }
+  .hero-left { position:relative; z-index:1; }
+  .eyebrow { font-family:var(--font-mono); font-size:0.68rem; color:var(--muted); letter-spacing:0.18em; text-transform:uppercase; margin-bottom:1.2rem; display:flex; align-items:center; gap:10px; opacity:0; animation:fadeUp .6s .1s forwards; }
+  .eyebrow::before { content:''; width:18px; height:1px; background:var(--muted); }
+  h1.hero-title { font-family:var(--font-display); font-size:clamp(3.8rem,7vw,7.5rem); line-height:.92; letter-spacing:.02em; margin-bottom:1.6rem; opacity:0; animation:fadeUp .6s .22s forwards; }
+  h1.hero-title .outline { -webkit-text-stroke:1px rgba(240,237,232,.3); color:transparent; }
+  .hero-sub { font-size:.98rem; color:var(--white2); line-height:1.72; max-width:370px; margin-bottom:2.2rem; font-weight:300; opacity:0; animation:fadeUp .6s .34s forwards; }
+  .hero-actions { display:flex; gap:1rem; align-items:center; opacity:0; animation:fadeUp .6s .46s forwards; }
+  .btn-main { font-family:var(--font-mono); font-size:.8rem; font-weight:500; padding:.85rem 1.8rem; background:var(--white); color:var(--black); border:none; border-radius:3px; text-decoration:none; letter-spacing:.06em; transition:transform .2s, box-shadow .2s; cursor:none; }
+  .btn-main:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,255,255,.1); }
+  .btn-ghost2 { font-family:var(--font-mono); font-size:.78rem; color:var(--muted); text-decoration:none; letter-spacing:.06em; border-bottom:1px solid var(--border-md); padding-bottom:1px; transition:color .2s, border-color .2s; cursor:none; }
+  .btn-ghost2:hover { color:var(--white); border-color:var(--white); }
+
+  /* HERO FISH */
+  .hero-right { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; opacity:0; animation:fadeIn 1s .5s forwards; }
+  .fish-wrap { position:relative; width:100%; max-width:400px; }
+  .fish-wrap svg { width:100%; height:auto; filter:drop-shadow(0 0 40px rgba(255,255,255,.05)); animation:fishFloat 5s ease-in-out infinite; }
+  .fish-ring { position:absolute; inset:-28px; border-radius:50%; border:1px solid var(--border); animation:spin 22s linear infinite; }
+  .fish-ring2 { position:absolute; inset:-56px; border-radius:50%; border:1px dashed rgba(255,255,255,.03); animation:spin 35s linear infinite reverse; }
+  .depth-tag { position:absolute; bottom:-24px; right:0; font-family:var(--font-mono); font-size:.62rem; color:var(--muted); letter-spacing:.12em; }
+
+  /* MARQUEE */
+  .marquee-wrap { overflow:hidden; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:.7rem 0; background:var(--dark); }
+  .marquee-track { display:flex; gap:2.5rem; animation:marquee 30s linear infinite; width:max-content; }
+  .m-item { font-family:var(--font-mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); white-space:nowrap; display:flex; align-items:center; gap:2.5rem; }
+  .m-sep { color:rgba(255,255,255,.18); }
+
+  /* SECTIONS */
+  section { padding:6rem 2.5rem; }
+  .sec-label { font-family:var(--font-mono); font-size:.65rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:.9rem; display:flex; align-items:center; gap:10px; }
+  .sec-label::before { content:''; width:16px; height:1px; background:var(--muted); }
+  .sec-title { font-family:var(--font-display); font-size:clamp(2.4rem,4.5vw,4rem); line-height:.96; letter-spacing:.02em; margin-bottom:3rem; }
+  .dim { color:rgba(240,237,232,.22); }
+
+  /* SERVICES */
+  .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+  .svc { background:var(--card); padding:2.2rem 1.8rem; transition:background .3s; }
+  .svc:hover { background:var(--card2); }
+  .svc-n { font-family:var(--font-mono); font-size:.62rem; color:var(--muted); letter-spacing:.1em; margin-bottom:1.8rem; }
+  .svc-icon { width:32px; height:32px; margin-bottom:1.1rem; opacity:.55; }
+  .svc-title { font-family:var(--font-display); font-size:1.55rem; letter-spacing:.03em; margin-bottom:.6rem; line-height:1.05; }
+  .svc-desc { font-size:.85rem; color:var(--white2); line-height:1.7; font-weight:300; }
+
+  /* STATS */
+  .stats-band { background:var(--dark); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:0 2.5rem; }
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); }
+  .stat { padding:3rem 1.5rem; border-right:1px solid var(--border); text-align:center; }
+  .stat:last-child { border-right:none; }
+  .stat-n { font-family:var(--font-display); font-size:3.8rem; letter-spacing:.02em; line-height:1; margin-bottom:.3rem; }
+  .stat-l { font-size:.78rem; color:var(--muted); font-weight:300; }
+
+  /* PROCESS */
+  .proc-table { border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+  .proc-row { display:grid; grid-template-columns:72px 1fr 220px; align-items:center; gap:1.5rem; padding:1.5rem 1.8rem; border-bottom:1px solid var(--border); transition:background .2s; cursor:default; }
+  .proc-row:last-child { border-bottom:none; }
+  .proc-row:hover { background:var(--card); }
+  .proc-num { font-family:var(--font-mono); font-size:.62rem; color:var(--muted); letter-spacing:.1em; }
+  .proc-name { font-family:var(--font-display); font-size:1.45rem; letter-spacing:.03em; }
+  .proc-desc { font-size:.8rem; color:var(--muted); font-weight:300; text-align:right; }
+
+  /* LEAD */
+  .lead-section { background:var(--black); border-top:1px solid var(--border); position:relative; overflow:hidden; }
+  .lead-fish-bg { position:absolute; right:-60px; top:50%; transform:translateY(-50%); width:440px; opacity:.025; pointer-events:none; }
+  .lead-inner { max-width:560px; position:relative; }
+  .lead-title { font-family:var(--font-display); font-size:clamp(3rem,5vw,5rem); line-height:.94; letter-spacing:.02em; margin-bottom:1rem; }
+  .lead-sub { font-size:.92rem; color:var(--white2); margin-bottom:2.2rem; font-weight:300; line-height:1.7; }
+
+  /* TABS */
+  .tabs { display:flex; border:1px solid var(--border-md); border-radius:3px; overflow:hidden; margin-bottom:1.6rem; width:fit-content; }
+  .tab-btn { font-family:var(--font-mono); font-size:.72rem; font-weight:500; padding:.55rem 1.3rem; border:none; background:transparent; color:var(--muted); cursor:pointer; letter-spacing:.06em; transition:all .2s; border-right:1px solid var(--border-md); white-space:nowrap; }
+  .tab-btn:last-child { border-right:none; }
+  .tab-btn.active { background:var(--white); color:var(--black); }
+
+  /* FORMS */
+  .form-panel { display:none; }
+  .form-panel.active { display:block; }
+  .f-group { margin-bottom:.8rem; }
+  .f-label { font-family:var(--font-mono); font-size:.6rem; font-weight:500; color:var(--muted); letter-spacing:.14em; text-transform:uppercase; display:block; margin-bottom:.35rem; }
+  .f-input { width:100%; padding:.78rem 1rem; background:var(--card); border:1px solid var(--border-md); border-radius:3px; color:var(--white); font-family:var(--font-body); font-size:.88rem; outline:none; transition:border-color .2s; }
+  .f-input::placeholder { color:rgba(240,237,232,.18); }
+  .f-input:focus { border-color:rgba(255,255,255,.4); }
+  .f-row { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+  .f-select { width:100%; padding:.78rem 1rem; background:var(--card); border:1px solid var(--border-md); border-radius:3px; color:var(--white); font-family:var(--font-body); font-size:.88rem; outline:none; appearance:none; cursor:pointer; }
+  .f-select option { background:#141414; }
+  .f-submit { width:100%; margin-top:.4rem; padding:.88rem; background:var(--white); color:var(--black); font-family:var(--font-mono); font-size:.8rem; font-weight:500; border:none; border-radius:3px; cursor:pointer; letter-spacing:.1em; text-transform:uppercase; transition:transform .2s, box-shadow .2s; }
+  .f-submit:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(255,255,255,.1); }
+  .f-note { font-size:.7rem; color:var(--muted); margin-top:.6rem; font-weight:300; }
+  .success-box { display:none; margin-top:1rem; padding:1.4rem; background:var(--card); border:1px solid var(--border-md); border-radius:4px; text-align:center; }
+  .success-box.show { display:block; }
+  .success-box strong { font-family:var(--font-display); font-size:1.3rem; letter-spacing:.04em; display:block; margin-bottom:.3rem; }
+  .success-box p { font-size:.82rem; color:var(--muted); font-weight:300; }
+
+  /* FOOTER */
+  footer { border-top:1px solid var(--border); padding:2rem 2.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .f-logo { display:flex; align-items:center; gap:8px; }
+  .f-logo svg { width:22px; height:22px; }
+  .f-logo-name { font-family:var(--font-display); font-size:1.05rem; letter-spacing:.06em; }
+  .f-tagline { font-family:var(--font-mono); font-size:.58rem; color:var(--muted); letter-spacing:.1em; margin-top:1px; }
+  .f-links { display:flex; gap:1.5rem; }
+  .f-links a { font-size:.75rem; color:var(--muted); text-decoration:none; transition:color .2s; }
+  .f-links a:hover { color:var(--white); }
+
+  /* KEYFRAMES */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  @keyframes fishFloat { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-14px) rotate(1deg)} }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  .reveal { opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.vis { opacity:1; transform:none; }
+
+  @media(max-width:768px){
+    .hero{grid-template-columns:1fr;padding:7rem 1.2rem 3rem;gap:2rem}
+    .hero-right{order:-1}
+    .fish-wrap{max-width:220px;margin:0 auto}
+    .svc-grid{grid-template-columns:1fr}
+    .stats-row{grid-template-columns:1fr 1fr}
+    .stat{border-right:none;border-bottom:1px solid var(--border)}
+    .stat:nth-child(odd){border-right:1px solid var(--border)}
+    .stat:last-child{border-bottom:none}
+    .proc-row{grid-template-columns:60px 1fr}
+    .proc-desc{display:none}
+    nav{padding:1rem 1.2rem}
+    .nav-links{display:none}
+    section{padding:4rem 1.2rem}
+    .lead-fish-bg{display:none}
+    body{cursor:auto}
+    .cursor-dot,.cursor-ring{display:none}
+    .f-row{grid-template-columns:1fr}
+    footer{flex-direction:column;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cDot"></div>
+<div class="cursor-ring" id="cRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg width="28" height="28" viewBox="0 0 90 90" fill="none">
+      <g fill="#f0ede8">
+        <polygon points="14,46 22,30 40,22 60,27 72,42 67,58 50,67 30,62 16,55"/>
+        <polygon points="10,42 2,30 16,40"/>
+        <polygon points="10,50 2,62 16,52"/>
+        <polygon points="34,22 40,12 50,20"/>
+        <ellipse cx="55" cy="40" rx="8" ry="8" fill="#f0ede8"/>
+        <ellipse cx="56" cy="40" rx="5" ry="5" fill="#080808"/>
+        <rect x="64" y="46" width="5" height="6" rx="0.5" fill="#080808"/>
+        <rect x="70" y="44" width="4" height="5" rx="0.5" fill="#080808"/>
+        <line x1="42" y1="22" x2="62" y2="6" stroke="#f0ede8" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="65" cy="4" r="5" fill="none" stroke="#f0ede8" stroke-width="1.5"/>
+        <circle cx="65" cy="4" r="2" fill="#f0ede8" style="animation:blink 2.5s ease-in-out infinite"/>
+      </g>
+    </svg>
+    <span class="nav-logo-text">MARÉ CRIATIVA</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#processo">Processo</a></li>
+    <li><a href="#contato">Contacto</a></li>
+  </ul>
+  <a href="#contato" class="nav-cta">[ falar connosco ]</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="scanlines"></div>
+  <div class="hero-left">
+    <div class="eyebrow">Agência de Marketing Digital</div>
+    <h1 class="hero-title">CRIATI<br><span class="outline">VIDADE</span><br>COM<br>PROFUN<br>DIDADE</h1>
+    <p class="hero-sub">Design que marca, posicionamento que converte, e tráfego que não para de crescer. Mergulhamos fundo para trazer o que realmente funciona.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn-main">QUERO CRESCER →</a>
+      <a href="#servicos" class="btn-ghost2">ver serviços</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="fish-wrap">
+      <div class="fish-ring"></div>
+      <div class="fish-ring2"></div>
+      <svg viewBox="0 0 360 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#f0ede8">
+          <!-- Corpo principal -->
+          <polygon points="42,178 68,112 102,80 164,64 226,76 272,110 288,158 276,208 242,240 180,258 118,250 70,222 44,198"/>
+          <!-- Cauda superior -->
+          <polygon points="38,160 4,118 52,148"/>
+          <!-- Cauda inferior -->
+          <polygon points="38,192 4,218 52,180"/>
+          <!-- Barbatana dorsal -->
+          <polygon points="130,68 148,28 178,56 164,70"/>
+          <!-- Barbatana pélvica -->
+          <polygon points="152,254 160,282 178,258"/>
+          <!-- Escamas geométricas -->
+          <polygon points="120,168 148,152 152,178 124,190" fill="#080808" opacity=".9"/>
+          <polygon points="155,160 183,146 187,170 158,182" fill="#080808" opacity=".9"/>
+          <polygon points="190,160 215,148 218,170 192,180" fill="#080808" opacity=".7"/>
+          <!-- Olho -->
+          <ellipse cx="236" cy="148" rx="24" ry="24" fill="#f0ede8"/>
+          <polygon points="226,140 238,132 250,140 247,154 236,160 225,154" fill="#080808"/>
+          <rect x="234" y="138" width="6" height="6" rx="1" fill="#f0ede8"/>
+          <!-- Dentes -->
+          <polygon points="266,162 280,156 284,166 270,172" fill="#080808"/>
+          <polygon points="274,172 287,167 289,178 276,182" fill="#080808"/>
+          <polygon points="280,182 290,178 291,188 281,190" fill="#080808"/>
+          <!-- Antena -->
+          <line x1="160" y1="66" x2="268" y2="10" stroke="#f0ede8" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="268,10 260,-2 256,10 272,10" fill="#f0ede8"/>
+          <!-- Luz -->
+          <circle cx="270" cy="18" r="14" fill="none" stroke="#f0ede8" stroke-width="2"/>
+          <circle cx="270" cy="18" r="6" fill="#f0ede8" style="animation:blink 2.5s ease-in-out infinite"/>
+          <line x1="270" y1="0" x2="270" y2="-6" stroke="#f0ede8" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+          <line x1="285" y1="5" x2="291" y2="0" stroke="#f0ede8" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+          <line x1="288" y1="18" x2="295" y2="18" stroke="#f0ede8" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+          <line x1="255" y1="5" x2="249" y2="0" stroke="#f0ede8" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+          <line x1="252" y1="18" x2="245" y2="18" stroke="#f0ede8" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+        </g>
+      </svg>
+      <div class="depth-tag">[ profundidade máxima ]</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="mtrack">
+    <div class="m-item">Design Estratégico <span class="m-sep">/</span> Reposicionamento de Marca <span class="m-sep">/</span> Gestão de Tráfego <span class="m-sep">/</span> Identidade Visual <span class="m-sep">/</span> Social Media <span class="m-sep">/</span> Marketing de Conteúdo <span class="m-sep">/</span></div>
+    <div class="m-item">Design Estratégico <span class="m-sep">/</span> Reposicionamento de Marca <span class="m-sep">/</span> Gestão de Tráfego <span class="m-sep">/</span> Identidade Visual <span class="m-sep">/</span> Social Media <span class="m-sep">/</span> Marketing de Conteúdo <span class="m-sep">/</span></div>
+  </div>
+</div>
+
+<!-- SERVIÇOS -->
+<section id="servicos">
+  <div class="sec-label reveal">O que fazemos</div>
+  <h2 class="sec-title reveal">SERVIÇOS <span class="dim">QUE<br>MOVEM</span> O NEGÓCIO</h2>
+  <div class="svc-grid reveal">
+    <div class="svc">
+      <div class="svc-n">— 01</div>
+      <svg class="svc-icon" viewBox="0 0 32 32" fill="none"><polygon points="3,29 16,3 29,29" stroke="#f0ede8" stroke-width="1.2" fill="none"/><line x1="9" y1="20" x2="23" y2="20" stroke="#f0ede8" stroke-width="1.2"/></svg>
+      <div class="svc-title">DESIGN<br>ESTRATÉGICO</div>
+      <p class="svc-desc">Identidades visuais que ficam na memória. Do logo às peças digitais, tudo com intenção e profundidade criativa.</p>
+    </div>
+    <div class="svc">
+      <div class="svc-n">— 02</div>
+      <svg class="svc-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="#f0ede8" stroke-width="1.2"/><polygon points="16,4 26,22 6,22" stroke="#f0ede8" stroke-width="1.2" fill="none"/></svg>
+      <div class="svc-title">REPOSI<br>CIONAMENTO</div>
+      <p class="svc-desc">Analisamos onde estás e construímos o caminho. Positioning, messaging e narrativa de marca que converte.</p>
+    </div>
+    <div class="svc">
+      <div class="svc-n">— 03</div>
+      <svg class="svc-icon" viewBox="0 0 32 32" fill="none"><rect x="3" y="3" width="26" height="26" stroke="#f0ede8" stroke-width="1.2"/><line x1="3" y1="16" x2="29" y2="16" stroke="#f0ede8" stroke-width="1.2"/><line x1="16" y1="3" x2="16" y2="29" stroke="#f0ede8" stroke-width="1.2"/></svg>
+      <div class="svc-title">GESTÃO DE<br>TRÁFEGO</div>
+      <p class="svc-desc">Meta Ads, Google Ads e estratégia orgânica. Tráfego qualificado que converte — não só métricas bonitas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stats-row reveal">
+    <div class="stat"><div class="stat-n">+80</div><div class="stat-l">projetos entregues</div></div>
+    <div class="stat"><div class="stat-n">3×</div><div class="stat-l">crescimento médio em tráfego</div></div>
+    <div class="stat"><div class="stat-n">98%</div><div class="stat-l">clientes satisfeitos</div></div>
+    <div class="stat"><div class="stat-n">5★</div><div class="stat-l">avaliação média</div></div>
+  </div>
+</div>
+
+<!-- PROCESSO -->
+<section id="processo">
+  <div class="sec-label reveal">Como trabalhamos</div>
+  <h2 class="sec-title reveal">SIMPLES. <span class="dim">DIRETO.<br>SEM</span> ENROLAÇÃO.</h2>
+  <div class="proc-table reveal">
+    <div class="proc-row"><div class="proc-num">01 —</div><div class="proc-name">DIAGNÓSTICO</div><div class="proc-desc">Entendemos o teu negócio em profundidade</div></div>
+    <div class="proc-row"><div class="proc-num">02 —</div><div class="proc-name">ESTRATÉGIA</div><div class="proc-desc">Plano claro: canais, mensagem e métricas</div></div>
+    <div class="proc-row"><div class="proc-num">03 —</div><div class="proc-name">EXECUÇÃO</div><div class="proc-desc">Criamos e gerimos com ritmo e qualidade</div></div>
+    <div class="proc-row"><div class="proc-num">04 —</div><div class="proc-name">RESULTADOS</div><div class="proc-desc">Medimos, otimizamos e escalamos</div></div>
+  </div>
+</section>
+
+<!-- LEAD + NEWSLETTER -->
+<section class="lead-section" id="contato">
+  <svg class="lead-fish-bg" viewBox="0 0 360 340" fill="none">
+    <g fill="#f0ede8">
+      <polygon points="42,178 68,112 102,80 164,64 226,76 272,110 288,158 276,208 242,240 180,258 118,250 70,222 44,198"/>
+      <polygon points="38,160 4,118 52,148"/><polygon points="38,192 4,218 52,180"/>
+      <polygon points="130,68 148,28 178,56 164,70"/>
+      <line x1="160" y1="66" x2="268" y2="10" stroke="#f0ede8" stroke-width="2.5"/>
+      <circle cx="270" cy="18" r="14" fill="none" stroke="#f0ede8" stroke-width="2"/>
+      <circle cx="270" cy="18" r="6" fill="#f0ede8"/>
+    </g>
+  </svg>
+  <div class="lead-inner">
+    <div class="sec-label reveal">Vamos começar</div>
+    <h2 class="lead-title reveal">PRONTO<br><span class="dim">PARA</span><br>MERGULHAR?</h2>
+    <p class="lead-sub reveal">Fala connosco para um orçamento, ou subscreve a newsletter com dicas semanais de marketing, design e tráfego.</p>
+    <div class="tabs reveal">
+      <button class="tab-btn active" onclick="switchTab('lead')">Pedir orçamento</button>
+      <button class="tab-btn" onclick="switchTab('news')">Newsletter</button>
+    </div>
+
+    <div class="form-panel active reveal" id="panel-lead">
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">Nome</label><input type="text" class="f-input" placeholder="O teu nome"></div>
+        <div class="f-group"><label class="f-label">Empresa</label><input type="text" class="f-input" placeholder="Nome da empresa"></div>
+      </div>
+      <div class="f-group"><label class="f-label">Email</label><input type="email" class="f-input" placeholder="email@empresa.com"></div>
+      <div class="f-group"><label class="f-label">WhatsApp</label><input type="tel" class="f-input" placeholder="+351 912 345 678"></div>
+      <div class="f-group">
+        <label class="f-label">O que precisas?</label>
+        <select class="f-select">
+          <option value="" disabled selected>Seleciona o serviço</option>
+          <option>Design Estratégico</option>
+          <option>Reposicionamento de Marca</option>
+          <option>Gestão de Tráfego</option>
+          <option>Full service (tudo junto)</option>
+          <option>Ainda não sei, quero conversar</option>
+        </select>
+      </div>
+      <div class="f-group"><label class="f-label">Conta-nos (opcional)</label><textarea class="f-input" rows="3" placeholder="O que está a acontecer com a tua marca? O que queres alcançar?" style="resize:vertical"></textarea></div>
+      <button class="f-submit" onclick="submitForm('lead')">ENVIAR PEDIDO →</button>
+      <p class="f-note">Respondemos em até 24h. Sem spam, sem pressão.</p>
+      <div class="success-box" id="success-lead"><strong>RECEBEMOS O TEU PEDIDO</strong><p>Vamos entrar em contacto em breve. Segue-nos no Instagram @marecriativaa.</p></div>
+    </div>
+
+    <div class="form-panel" id="panel-news">
+      <div class="f-group"><label class="f-label">Nome</label><input type="text" class="f-input" placeholder="Como te chamamos?"></div>
+      <div class="f-group"><label class="f-label">Email</label><input type="email" class="f-input" placeholder="email@exemplo.com"></div>
+      <button class="f-submit" onclick="submitForm('news')">SUBSCREVER NEWSLETTER →</button>
+      <p class="f-note">Uma vez por semana. Só o que vale a pena ler. Cancelas quando quiseres.</p>
+      <div class="success-box" id="success-news"><strong>BEM-VINDO À MARÉ</strong><p>Próxima semana já recebes a tua primeira edição. Obrigado por mergulhares connosco.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">
+    <svg width="22" height="22" viewBox="0 0 90 90" fill="none"><g fill="#f0ede8"><polygon points="14,46 22,30 40,22 60,27 72,42 67,58 50,67 30,62 16,55"/><polygon points="10,42 2,30 16,40"/><polygon points="10,50 2,62 16,52"/><polygon points="34,22 40,12 50,20"/><ellipse cx="56" cy="40" rx="5" ry="5" fill="#080808"/><rect x="64" y="46" width="5" height="6" fill="#080808"/><rect x="70" y="44" width="4" height="5" fill="#080808"/><line x1="42" y1="22" x2="62" y2="6" stroke="#f0ede8" stroke-width="1.8"/><circle cx="65" cy="4" r="5" fill="none" stroke="#f0ede8" stroke-width="1.5"/><circle cx="65" cy="4" r="2"/></g></svg>
+    <div>
+      <div class="f-logo-name">MARÉ CRIATIVA</div>
+      <div class="f-tagline">criatividade com profundidade</div>
+    </div>
+  </div>
+  <div class="f-links">
+    <a href="https://www.instagram.com/marecriativaa/" target="_blank">@marecriativaa</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#contato">Contacto</a>
+  </div>
+</footer>
+
+<script>
+  const dot=document.getElementById('cDot'),ring=document.getElementById('cRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx-4}px,${my-4}px)`;});
+  (function a(){rx+=(mx-rx)*.09;ry+=(my-ry)*.09;ring.style.transform=`translate(${rx-15}px,${ry-15}px)`;requestAnimationFrame(a)})();
+
+  const io=new IntersectionObserver(entries=>entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('vis'),i*60);io.unobserve(e.target);}}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  function switchTab(t){
+    document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='lead')||(i===1&&t==='news')));
+    document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+t).classList.add('active');
+  }
+  function submitForm(t){const b=document.getElementById('success-'+t);b.classList.add('show');setTimeout(()=>b.classList.remove('show'),5500);}
+
+  const tr=document.getElementById('mtrack');
+  tr.innerHTML+=tr.innerHTML;
+</script>
+</body>
+</html>
